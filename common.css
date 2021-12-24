@@ -1,0 +1,12 @@
+.bd-ex{
+    position: relative;
+    padding: 1rem;
+}
+
+.ex{
+    background-color: lightslategray;
+    color: black;
+    border:0.5px solid;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}

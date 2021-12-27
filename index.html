@@ -46,6 +46,16 @@
         <v-app>
           <v-main>
             <v-container>
+            	<v-card elevation="24" outlined>
+              	<v-card-title>item</v-card-title>
+                <v-card-subtitle>ytrdfvgg</v-card-subtitle>
+                <v-card-text>qq</v-card-text>
+                <v-card-actions>
+                	<v-btn v-on:click="regItem">등록</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-container>
+            <v-container>
               <v-card elevation="11" outlined v-for="item in todoList">
                 <v-card-title>{{item.to_do}}</v-card-title>
                 <v-card-subtitle>{{item.due_date}} {{item.due_time}} completion when {{item.complete_date}} {{item.complete_time}}</v-card-subtitle>

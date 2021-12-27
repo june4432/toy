@@ -38,6 +38,9 @@ var app = new Vue({
       this.todoList[idx].complete_time = "1232";
       localStorage.setItem(idx, JSON.stringify(this.todoList[idx]));
       console.log(localStorage.getItem(idx));
+    },
+    regItem : function(){
+      alert("등록 완료.");
     }
   }
 });

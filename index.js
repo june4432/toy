@@ -9,6 +9,7 @@ defer => html을 파싱하는 동안 스크립트를 다운(비동기로 스크�
 */
 var app = new Vue({
   el:"#app",
+  vuetify: new Vuetify(),  //vuetify를 적용하려면 요렇게 선언해야 하는듯.
   data:{
     message:"lyj"
   }

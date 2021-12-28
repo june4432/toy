@@ -8,42 +8,126 @@ defer => html을 파싱하는 동안 스크립트를 다운(비동기로 스크�
 => index.html head 내에 스크립트로 호출하고, defer 설정하여 html 파싱 이후에 스크립트를 실행하도록 변경.
 */
 localStorage.clear(); //로컬스토리지에 테스트데이터가 쌓여서 이것저것 테스트하는동안은 초기화 후 테스트데이터로 해야한다.
-localStorage.setItem("0", "{\"seq_no\":\"0\",\"to_do\":\"커피사가기\",\"note\":\"맥심 커피모카, 카누 아메리카노\",\"due_date\":\"20211227\",\"due_time\":\"1300\", \"reg_date\":\"20211223\", \"reg_time\":\"1459\", \"complete_date\":\"20211229\", \"complete_time\":\"1430\"}");
-localStorage.setItem("1", "{\"seq_no\":\"1\",\"to_do\":\"라면사가기\",\"note\":\"굴진짬뽕!!!\",\"due_date\":\"20211229\",\"due_time\":\"1300\", \"reg_date\":\"20211224\", \"reg_time\":\"1459\", \"complete_date\":\"\", \"complete_time\":\"\"}");
-localStorage.setItem("2", "{\"seq_no\":\"2\",\"to_do\":\"휴대폰요금결제\",\"note\":\"케이티 홈페이지에서..\",\"due_date\":\"20211231\",\"due_time\":\"1300\", \"reg_date\":\"20211225\", \"reg_time\":\"1459\", \"complete_date\":\"\", \"complete_time\":\"\"}");
-localStorage.setItem("3", "{\"seq_no\":\"3\",\"to_do\":\"카드요금결제\",\"note\":\"국민, 우리, 하나 체크 교통\",\"due_date\":\"20211231\",\"due_time\":\"1300\", \"reg_date\":\"20211226\", \"reg_time\":\"1459\", \"complete_date\":\"\", \"complete_time\":\"\"}");
-localStorage.setItem("4", "{\"seq_no\":\"4\",\"to_do\":\"아이패드사기\",\"note\":\"쿠팡에서 싼거 혹은 당근마켓 미개봉\",\"due_date\":\"20220124\",\"due_time\":\"1300\", \"reg_date\":\"20211226\", \"reg_time\":\"1459\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_0", "{\"key\":\"item_0\",\"seq_no\":\"0\",\"to_do\":\"커피사가기\",\"note\":\"맥심 커피모카, 카누 아메리카노\",\"due_date\":\"20211227\",\"due_time\":\"1300\", \"reg_date\":\"20211223\", \"reg_time\":\"14:59\", \"complete_date\":\"20211229\", \"complete_time\":\"14:30\"}");
+localStorage.setItem("item_1", "{\"key\":\"item_1\",\"seq_no\":\"1\",\"to_do\":\"라면사가기\",\"note\":\"굴진짬뽕!!!\",\"due_date\":\"20211229\",\"due_time\":\"1300\", \"reg_date\":\"20211224\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_2", "{\"key\":\"item_2\",\"seq_no\":\"2\",\"to_do\":\"휴대폰요금결제\",\"note\":\"케이티 홈페이지에서..\",\"due_date\":\"20211231\",\"due_time\":\"1300\", \"reg_date\":\"20211225\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_3", "{\"key\":\"item_3\",\"seq_no\":\"3\",\"to_do\":\"카드요금결제\",\"note\":\"국민, 우리, 하나 체크 교통\",\"due_date\":\"20211231\",\"due_time\":\"1300\", \"reg_date\":\"20211226\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_4", "{\"key\":\"item_4\",\"seq_no\":\"4\",\"to_do\":\"아이패드사기\",\"note\":\"쿠팡에서 싼거 혹은 당근마켓 미개봉\",\"due_date\":\"20220124\",\"due_time\":\"1300\", \"reg_date\":\"20211226\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
 
-var todoList = [];
-var lsLength = localStorage.length;
+let todoList = [];
 
-//로컬스토리지에 저장된 내용을 json으로 파싱하여 배열에 집어넣는다.
-for (var i = 0; i < lsLength; i++) {
-  todoList.push(JSON.parse(localStorage.getItem(i)));
-  
-}
-
-console.log(todoList);
-
-var app = new Vue({
+let app = new Vue({
   el:"#app",
   vuetify: new Vuetify(),  //vuetify를 적용하려면 요렇게 선언해야 하는듯.
   data:{
     message:"해야 할 일",
-    todoList:todoList
+    visible:{
+      insert : false
+    },
+    date:"",
+    calMenu:"",
+    modal:"",
+    todoList:[],
+    inputValues:{
+      to_do:"",
+      note:"",
+      due_date:"",
+      due_time:"",
+      reg_date:"",
+      reg_time:""
+    }
   },
   methods:{
-    doComplete : function(idx){
-      this.todoList[idx].complete_date = "20211228";
-      this.todoList[idx].complete_time = "1232";
-      localStorage.setItem(idx, JSON.stringify(this.todoList[idx]));
-      console.log(localStorage.getItem(idx));
+    doSearch : function(){
+      todoList = [];
+      //로컬스토리지에 저장된 내용을 json으로 파싱하여 배열에 집어넣는다.
+      for (var item in localStorage){
+        if(item.startsWith("item_")){
+          todoList.push(JSON.parse(localStorage.getItem(item)));
+        }
+      }
+      todoList.sort(function(a,b){
+        return a.seq_no - b.seq_no;
+      });
+      this.todoList = todoList;
     },
-    regItem : function(){
-      alert("등록 완료.");
+    doComplete : function(list){
+      
+      list.complete_date = this.getTime("date");
+      list.complete_time = this.getTime("time");
+      localStorage.setItem(list.key, JSON.stringify(list));
+    },
+    doDelete : function(key){
+      //해당 아이템 삭제 
+      localStorage.removeItem(key);
+      //재조회
+      this.doSearch();
+    },
+    doEdit : function(list){
+      let key = list.key;
+      let seqNo = list.seq_no;
+      this.inputValues.to_do = list.to_do;
+      this.inputValues.note = list.note;
+      this.inputValues.due_date = list.due_date;
+      this.inputValues.due_time = list.due_time;
+      this.inputValues.reg_date = list.reg_date;
+      this.inputValues.reg_time = list.reg_time;
+      alert("수정이 가능합니다.");
+    },
+    doSave : function(){
+      let seqNo = this.seq_no || this.getMaxSeqNo();
+      let key = this.key || this.prefix+seqNo;
+      let reg_date = this.reg_date || this.getTime("date");
+      let reg_time = this.reg_time || this.getTime("time");
+
+      let obj = {"key":key,
+                 "seq_no":seqNo,
+                 "to_do":this.inputValues.to_do,
+                 "note":this.inputValues.note,
+                 "due_date":this.inputValues.due_date,
+                 "due_time":this.inputValues.due_time,
+                 "reg_date":reg_date,
+                 "reg_time":reg_time,
+                 "complete_date":"",
+                 "complete_time":""
+                }
+
+      //console.log(this.$refs.to_do) -> ref가 to_do인 객체를 리턴한다.
+      let stringObj = JSON.stringify(obj);
+      localStorage.setItem(key,stringObj);
+      this.inputValues.to_do = null;
+      this.inputValues.note = null;
+      this.inputValues.due_date = null;
+      this.inputValues.due_time = null;
+      this.doSearch();
+    },
+    getMaxSeqNo : function(){
+      let refList = this.todoList;
+      
+      refList.sort(function(a,b){
+        return Number(b.seq_no) - Number(a.seq_no);
+      })
+
+      var maxSeqNo = Number(refList[0].seq_no)+1
+      return maxSeqNo;
+    },
+    getTime : function(type){
+      let today = new Date();
+      let year = today.getFullYear();
+      let month = today.getMonth()+1;
+      let day = today.getDay();
+      let hours = today.getHours();
+      let minutes = today.getMinutes();
+
+      return type == "date" ? ""+year+month+day : ""+hours+minutes;
+    },
+    setDate : function(){
+      this.$refs.calMenu.save(this.inputValues.due_date)
+    },
+    doHiddenInsertBtn : function(){
+      this.visible.insert = !this.visible.insert;
     }
   }
 });
 
-// localStorage.setItem("name", "LYJ");
-// Vue.set(app, "message", localStorage.getItem("name"));
+app.doSearch();

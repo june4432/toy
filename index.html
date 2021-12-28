@@ -23,55 +23,86 @@
         <script>
           /*
             여기에 있는 스크립트는 파싱이 되는동안 바로 실행이 된다.
-            
-            MILESTONE OR ROAD-MAP
-
-            1) localStorage를 활용한 to-do list.   -> v-card형태로 갖다쓸 수 있도록. 1) localStorage에 순서대로 저장한다. 2) json형태로 다양한 정보를 저정한다.
-            2) to-do와 done을 나누어 표시할 수 있도록 한다. -> 완료목록 표시까지. 값 저장 시 등록시간, 완료시간 정보 저장하여 정렬까지 신경쓸 수 있도록.
-            3) 사진을 랜덤 혹은 고정으로 가져온다.
-            4) 날씨도 표시하여 준다.
-            5) 모양을 이쁘게 한다.
-
-            
-            frontend = [alltime Vue.js & vuetify]
-            layout   = [초기 없음.] => [최종 bootstrap 활용하여 모바일~데스크탑 대응, 구글 머티리얼즈(?)]
-            backend  = [초기 localStorage에 json형태로 저장.] => [중기 cvs or 엑셀파일을 읽어서 처리할 수 있도록 처리 localstorage에 파일경로 저장하여 항상 불러올 수 있도록?!] 
-                       => [최종 db 연동(음.. db종류는 글쎄. 안해본 것으로 해보면 좋을듯. 오라클 제외 )]
-            2021.12.27 시작...!
           */
         </script>
     </head>
     <body>
       <div id="app">
         <v-app>
-          <v-main>
-            <v-container>
-            	<v-card elevation="24" outlined>
-              	<v-card-title>item</v-card-title>
-                <v-card-subtitle>ytrdfvgg</v-card-subtitle>
-                <v-card-text>qq</v-card-text>
-                <v-card-actions>
-                	<v-btn v-on:click="regItem">등록</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-container>
-            <v-container>
-              <v-card elevation="11" outlined v-for="item in todoList">
-                <v-card-title>{{item.to_do}}</v-card-title>
-                <v-card-subtitle>{{item.due_date}} {{item.due_time}} completion when {{item.complete_date}} {{item.complete_time}}</v-card-subtitle>
-                <v-card-text>{{item.note}}</v-card-text>
-                <v-card-actions>
-                  <v-btn v-if="!item.complete_date" v-on:click="doComplete(item.seq_no)">완료</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-container>
-            <v-container>
-              <v-btn raised>Save</v-btn>
-            </v-container>  
-            <v-container>
-              {{message}}
-            </v-container>  
-          </v-main>
+          <v-form>
+            <v-main>
+              <v-container>
+                <v-row>
+                  <v-col class="text-right">
+                    <v-btn raised v-on:click="doHiddenInsertBtn" right="true" >등록하기</v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>  
+              <v-container v-if="visible.insert">
+                <v-card elevation="20" outlined>
+                  <v-card-title>
+                    <v-text-field v-model="inputValues.to_do" label="할 일을 입력하세요." ref="to_do"></v-text-field>
+                  </v-card-title>
+                  <v-card-subtitle>
+                    <v-row>
+                      <v-col cols="6">
+                        <!--   
+                          v-menu는 드롭다운처럼 만들 수 있는 기능.   
+                          텍스트필드를 눌렀을 때 달력창이 뜬다. 동작이나 내용 조금더 분석 필요..!
+                        -->
+                        <v-menu            
+                          ref="calMenu"
+                          v-model="calMenu"
+                          :close-on-content-click="false"
+                          :return-value.sync="inputValues.due_date"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="auto"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="inputValues.due_date"
+                              label="언제까지?"
+                              prepend-icon="mdi-calendar"
+                              readonly
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="inputValues.due_date"  scrollable color="blue lighten-1" header-color="primary" locale="ko-kr">
+                            <v-spacer></v-spacer>
+                            <v-btn  color="primary" @click="calMenu = false" >닫기</v-btn>
+                            <v-btn  color="primary" @click="setDate" >확인</v-btn>
+                          </v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      
+                      <v-col cols="6"><v-text-field v-model="inputValues.due_time" label="몇시까지?" type="time" value="" ref="due_time"></v-text-field></v-col>
+                  </v-row>
+                  </v-card-subtitle>
+                  <v-card-text><v-text-field v-model="inputValues.note" label="세부내용"></v-text-field></v-card-text>
+                  <v-card-actions>
+                    <v-btn v-on:click="doSave">저장</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-container>
+              <v-container v-for="list in todoList" v-bind:key="list.seq_no">
+                <!-- 배열을 사용한 버전 -->
+                <v-card elevation="11" outlined>
+                  <v-card-title>{{list.to_do}}</v-card-title>
+                  <v-card-subtitle>
+                    due to {{list.due_date}} {{list.due_time}}, registered at {{list.reg_date}} {{list.reg_time}} 
+                    <ul v-if="list.complete_date">completion when {{list.complete_date}} {{list.complete_time}}</ul>
+                  </v-card-subtitle>
+                  <v-card-text>{{list.note}}</v-card-text>
+                  <v-card-actions>
+                    <v-btn v-if="!list.complete_date" v-on:click="doComplete(list)" color="primary">완료</v-btn>
+                    <v-btn v-if="!list.complete_date" v-on:click="doEdit(list)" >수정</v-btn>
+                    <v-btn v-if="!list.complete_date" v-on:click="doDelete(list.key)" color="error">삭제</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-container>
+            </v-main>
+          </v-form>
         </v-app>
       </div>
     </body>

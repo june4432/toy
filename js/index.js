@@ -20,13 +20,14 @@ let app = new Vue({
   el:"#app",
   vuetify: new Vuetify(),  //vuetify를 적용하려면 요렇게 선언해야 하는듯.
   data:{
-    message:"해야 할 일",
+    prefix:"item_",
+    snackBarMsg:"",
     visible:{
-      insert : false
+      insert : false,
+      snackBar : false,
+      calMenu : false
     },
     date:"",
-    calMenu:"",
-    modal:"",
     todoList:[],
     inputValues:{
       to_do:"",
@@ -34,7 +35,9 @@ let app = new Vue({
       due_date:"",
       due_time:"",
       reg_date:"",
-      reg_time:""
+      reg_time:"",
+      key:"",
+      seq_no:""
     }
   },
   methods:{
@@ -56,27 +59,29 @@ let app = new Vue({
       list.complete_date = this.getTime("date");
       list.complete_time = this.getTime("time");
       localStorage.setItem(list.key, JSON.stringify(list));
+      this.doSnackBar("수고하셨어요.");
     },
     doDelete : function(key){
       //해당 아이템 삭제 
       localStorage.removeItem(key);
+      this.doSnackBar("삭제하였습니다.");
       //재조회
       this.doSearch();
     },
     doEdit : function(list){
-      let key = list.key;
-      let seqNo = list.seq_no;
+      this.inputValues.key = list.key;
+      this.inputValues.seq_no = list.seq_no;
       this.inputValues.to_do = list.to_do;
       this.inputValues.note = list.note;
       this.inputValues.due_date = list.due_date;
       this.inputValues.due_time = list.due_time;
       this.inputValues.reg_date = list.reg_date;
       this.inputValues.reg_time = list.reg_time;
-      alert("수정이 가능합니다.");
+      this.doSnackBar("수정할 수 있어요.");
     },
     doSave : function(){
-      let seqNo = this.seq_no || this.getMaxSeqNo();
-      let key = this.key || this.prefix+seqNo;
+      let seqNo = this.inputValues.seq_no || this.getMaxSeqNo();
+      let key = this.inputValues.key || this.prefix+seqNo.toString();
       let reg_date = this.reg_date || this.getTime("date");
       let reg_time = this.reg_time || this.getTime("time");
 
@@ -90,25 +95,25 @@ let app = new Vue({
                  "reg_time":reg_time,
                  "complete_date":"",
                  "complete_time":""
-                }
-
+                };
       //console.log(this.$refs.to_do) -> ref가 to_do인 객체를 리턴한다.
       let stringObj = JSON.stringify(obj);
       localStorage.setItem(key,stringObj);
+      this.inputValues.seq_no = null;
+      this.inputValues.key = null;
       this.inputValues.to_do = null;
       this.inputValues.note = null;
       this.inputValues.due_date = null;
       this.inputValues.due_time = null;
+      this.doSnackBar("저장되었습니다.");
       this.doSearch();
     },
     getMaxSeqNo : function(){
-      let refList = this.todoList;
-      
+      let refList = this.todoList;      
       refList.sort(function(a,b){
         return Number(b.seq_no) - Number(a.seq_no);
-      })
-
-      var maxSeqNo = Number(refList[0].seq_no)+1
+      });
+      var maxSeqNo = Number(refList[0].seq_no)+1;
       return maxSeqNo;
     },
     getTime : function(type){
@@ -126,6 +131,10 @@ let app = new Vue({
     },
     doHiddenInsertBtn : function(){
       this.visible.insert = !this.visible.insert;
+    },
+    doSnackBar : function(message){
+      this.snackBarMsg = message;
+      this.visible.snackBar = true;
     }
   }
 });

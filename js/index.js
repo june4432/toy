@@ -23,6 +23,7 @@ let app = new Vue({
     console.log("created...");
   },
   mounted(){
+    this.visible.wholePageLoading = false;
     console.log("mounted...");
   },
   destroyed(){
@@ -33,6 +34,7 @@ let app = new Vue({
     snackBarMsg:"",
     snackBarTimeOut:"1500",
     visible:{
+      wholePageLoading : true, //첫페이지 로딩 시 화면 로딩중 표시여부
       insert : false,
       snackBar : false,
       calMenu : false
@@ -144,8 +146,10 @@ let app = new Vue({
       this.visible.insert = !this.visible.insert;
     },
     doSnackBar : function(message){
+      this.visible.snackBar = false;
+      this.snackBarTimeOut = "1500";
       this.snackBarMsg = message;
-      this.visible.snackBar = true;
+      this.visible.snackBar = !this.visible.snackBar;
     }
   }
 });

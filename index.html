@@ -28,6 +28,11 @@
     </head>
     <body>
       <div id="app">
+        <v-overlay :opacity="0.8" color="#6c757d" :value="visible.wholePageLoading" >
+          <v-progress-circular indeterminate size="64">
+            Loading...
+          </v-progress-circular>
+        </v-overlay>
         <v-app id="app2">
           <v-form>
             <v-main>

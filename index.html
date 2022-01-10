@@ -27,85 +27,104 @@
         </script>
     </head>
     <body>
-      <div id="app">
+      <div id="app" >
         <v-overlay :opacity="0.8" color="#6c757d" :value="visible.wholePageLoading" >
           <v-progress-circular indeterminate size="64">
             Loading...
           </v-progress-circular>
         </v-overlay>
+        
         <v-app id="app2">
           <v-form>
-            <v-main>
-              <v-container>
-                <v-row>
-                  <v-col class="text-right">
-                    <v-btn raised v-on:click="doHiddenInsertBtn" right="true" >등록하기</v-btn>
-                  </v-col>
-                </v-row>
-              </v-container>  
+            <v-main>          
+              <v-app-bar color="blue" elevation="10" fixed>
+                <v-app-bar-nav-icon></v-app-bar-nav-icon>
+                <v-toolbar-title>오십이주</v-toolbar-title>
+              </v-app-bar>
+              <v-row class="appBarSpace"></v-row>
               <v-container v-if="visible.insert">
-                <v-card elevation="20" outlined>
-                  <v-card-title>
-                    <v-text-field v-model="inputValues.to_do" label="할 일을 입력하세요." ref="to_do"></v-text-field>
-                  </v-card-title>
-                  <v-card-subtitle>
-                    <v-row>
-                      <v-col cols="6">
-                        <!--   
-                          v-menu는 드롭다운처럼 만들 수 있는 기능.   
-                          텍스트필드를 눌렀을 때 달력창이 뜬다. 동작이나 내용 조금더 분석 필요..!
-                        -->
-                        <v-menu            
-                          ref="calMenu"
-                          v-model="visible.calMenu"
-                          :close-on-content-click="false"
-                          :return-value.sync="inputValues.due_date"
-                          transition="scale-transition"
-                          offset-y
-                          min-width="auto"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-text-field
-                              v-model="inputValues.due_date"
-                              label="언제까지?"
-                              prepend-icon="mdi-calendar"
-                              readonly
-                              v-on="on"
-                            ></v-text-field>
-                          </template>
-                          <v-date-picker v-model="inputValues.due_date"  scrollable color="blue lighten-1" header-color="primary" locale="ko-kr">
-                            <v-spacer></v-spacer>
-                            <v-btn  color="primary" @click="visible.calMenu = false" >닫기</v-btn>
-                            <v-btn  color="primary" @click="setDate" >확인</v-btn>
-                          </v-date-picker>
-                        </v-menu>
-                      </v-col>
-                      
-                      <v-col cols="6"><v-text-field v-model="inputValues.due_time" label="몇시까지?" type="time" value="" ref="due_time"></v-text-field></v-col>
-                  </v-row>
-                  </v-card-subtitle>
-                  <v-card-text><v-text-field v-model="inputValues.note" label="세부내용"></v-text-field></v-card-text>
-                  <v-card-actions>
-                    <v-btn v-on:click="doSave">저장</v-btn>
-                  </v-card-actions>
-                </v-card>
+                <v-overlay :opacity="0.8" color="#E3F2FD" >
+                  <v-card elevation="20" outlined v-click-outside="setInsertFalse">
+                    <v-card-title>
+                      <v-text-field v-model="inputValues.to_do" label="할 일을 입력하세요." ref="to_do"></v-text-field>
+                    </v-card-title>
+                    <v-card-subtitle>
+                      <v-row>
+                        <v-col cols="6">
+                          <!--   
+                            v-menu는 드롭다운처럼 만들 수 있는 기능.   
+                            텍스트필드를 눌렀을 때 달력창이 뜬다. 동작이나 내용 조금더 분석 필요..!
+                          -->
+                          <v-menu            
+                            ref="calMenu"
+                            v-model="visible.calMenu"
+                            :close-on-content-click="false"
+                            :return-value.sync="inputValues.due_date"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="auto"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="inputValues.due_date"
+                                label="언제까지?"
+                                prepend-icon="mdi-calendar"
+                                readonly
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="inputValues.due_date" @change="setDate" scrollable color="blue lighten-1" header-color="primary" locale="ko-kr">
+                            </v-date-picker>
+                          </v-menu>
+                        </v-col>
+                        <v-col cols="6"><v-text-field v-model="inputValues.due_time" label="몇시까지?" type="time" value="" ref="due_time"></v-text-field></v-col>
+                    </v-row>
+                    </v-card-subtitle>
+                    <v-card-text><v-text-field v-model="inputValues.note" label="세부내용"></v-text-field></v-card-text>
+                    <v-card-actions>
+                      <v-btn v-if="inputValues.seq_no" v-on:click="doDelete(list.key)" color="error">삭제</v-btn>
+                      <v-spacer></v-spacer>
+                      <v-btn v-on:click="doSave" color="success">저장</v-btn>
+                      <v-btn v-on:click="doHiddenInsertBtn" color="primary">닫기</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-overlay>
               </v-container>
               <v-container v-for="list in todoList" v-bind:key="list.seq_no">
                 <!-- 배열을 사용한 버전 -->
                 <v-card elevation="11" outlined>
-                  <v-card-title>{{list.to_do}}</v-card-title>
+                  <v-card-title>{{list.to_do}}
+                    <v-spacer></v-spacer>
+                    <v-btn icon v-on:click="doEdit(list)">
+                      <v-icon>more_vert</v-icon>
+                    </v-btn>
+                  </v-card-title>
                   <v-card-subtitle>
-                    due to {{list.due_date}} {{list.due_time}}, registered at {{list.reg_date}} {{list.reg_time}} 
-                    <ul v-if="list.complete_date">completion when {{list.complete_date}} {{list.complete_time}}</ul>
+                    {{list.note}} <br>due to {{list.due_date}} {{list.due_time}} 
                   </v-card-subtitle>
-                  <v-card-text>{{list.note}}</v-card-text>
+                  <v-card-text class="text-right">
+                    등록일 : {{list.reg_date}} {{list.reg_time}} <br>
+                    {{list.complete_date ? "완료일 : " + list.complete_date + " " + list.complete_time : ""}}</ul>
+                  </v-card-text>
                   <v-card-actions>
-                    <v-btn v-if="!list.complete_date" v-on:click="doComplete(list)" color="primary">완료</v-btn>
-                    <v-btn v-if="!list.complete_date" v-on:click="doEdit(list)" >수정</v-btn>
-                    <v-btn v-if="!list.complete_date" v-on:click="doDelete(list.key)" color="error">삭제</v-btn>
+                    <v-flex>
+                      <v-btn v-if="!list.complete_date" v-on:click="doComplete(list)" color="success">완료</v-btn>
+                    </v-flex>
+                    <v-flex class="text-right">
+                      
+                    </v-flex>
                   </v-card-actions>
                 </v-card>
               </v-container>
+              <v-btn class="fabBtn"
+                color="#F50057"
+                elevation="12"
+                fab
+                bottom
+                right
+                fixed
+                v-on:click="doHiddenInsertBtn"
+              >+</v-btn>
               <template>
                 <div class="text-center ma-2">
                   <v-snackbar v-model="visible.snackBar" :timeout="snackBarTimeOut">

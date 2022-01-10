@@ -13,6 +13,9 @@ localStorage.setItem("item_1", "{\"key\":\"item_1\",\"seq_no\":\"1\",\"to_do\":\
 localStorage.setItem("item_2", "{\"key\":\"item_2\",\"seq_no\":\"2\",\"to_do\":\"휴대폰요금결제\",\"note\":\"케이티 홈페이지에서..\",\"due_date\":\"2021-12-31\",\"due_time\":\"17:45\", \"reg_date\":\"2021-12-25\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
 localStorage.setItem("item_3", "{\"key\":\"item_3\",\"seq_no\":\"3\",\"to_do\":\"카드요금결제\",\"note\":\"국민, 우리, 하나 체크 교통\",\"due_date\":\"2021-12-31\",\"due_time\":\"13:00\", \"reg_date\":\"2021-12-26\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
 localStorage.setItem("item_4", "{\"key\":\"item_4\",\"seq_no\":\"4\",\"to_do\":\"아이패드사기\",\"note\":\"쿠팡에서 싼거 혹은 당근마켓 미개봉\",\"due_date\":\"2022-01-24\",\"due_time\":\"13:00\", \"reg_date\":\"2021-12-26\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_5", "{\"key\":\"item_5\",\"seq_no\":\"5\",\"to_do\":\"맥북프로사기\",\"note\":\"교육할인 혹은 당근마켓 미개봉\",\"due_date\":\"2022-02-04\",\"due_time\":\"13:00\", \"reg_date\":\"2022-01-10\", \"reg_time\":\"14:59\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_6", "{\"key\":\"item_6\",\"seq_no\":\"6\",\"to_do\":\"신발사기\",\"note\":\"파주아울렛 가보기. 나이키 아디다스\",\"due_date\":\"2022-02-14\",\"due_time\":\"19:00\", \"reg_date\":\"2022-01-12\", \"reg_time\":\"17:23\", \"complete_date\":\"\", \"complete_time\":\"\"}");
+localStorage.setItem("item_7", "{\"key\":\"item_7\",\"seq_no\":\"7\",\"to_do\":\"음식물쓰레기버리기\",\"note\":\"출근하는 길에 처리하기\",\"due_date\":\"2022-02-21\",\"due_time\":\"22:00\", \"reg_date\":\"2021-01-13\", \"reg_time\":\"19:01\", \"complete_date\":\"\", \"complete_time\":\"\"}");
 
 let todoList = [];
 

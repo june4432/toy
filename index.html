@@ -44,7 +44,7 @@
               <v-row class="appBarSpace"></v-row>
               <v-container v-if="visible.insert">
                 <v-overlay :opacity="0.8" color="#E3F2FD" >
-                  <v-card elevation="20" outlined v-click-outside="setInsertFalse">
+                   <v-card elevation="20" outlined >  <!--v-click-outside="setInsertFalse" --> 
                     <v-card-title>
                       <v-text-field v-model="inputValues.to_do" label="할 일을 입력하세요." ref="to_do"></v-text-field>
                     </v-card-title>
@@ -95,7 +95,7 @@
                 <v-card elevation="11" outlined>
                   <v-card-title>{{list.to_do}}
                     <v-spacer></v-spacer>
-                    <v-btn icon v-on:click="doEdit(list)">
+                    <v-btn v-show="!list.complete_date" icon v-on:click="doEdit(list)">
                       <v-icon>more_vert</v-icon>
                     </v-btn>
                   </v-card-title>

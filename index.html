@@ -20,6 +20,7 @@
         <link href='css/common.css' rel='stylesheet' type='text/css'/>
         <!-- index.js -->
         <script defer src="js/index.js"></script>
+        <script defer src="js/menu.js"></script>
         <script>
           /*
             여기에 있는 스크립트는 파싱이 되는동안 바로 실행이 된다.
@@ -37,7 +38,7 @@
         <v-app id="app2">
           <v-form>
             <v-main>          
-              <v-app-bar color="blue" elevation="10" fixed>
+              <v-app-bar color="blue" elevation="10" fixed v-on:click="toggleMenu">
                 <v-app-bar-nav-icon></v-app-bar-nav-icon>
                 <v-toolbar-title>오십이주</v-toolbar-title>
               </v-app-bar>
@@ -82,7 +83,7 @@
                     </v-card-subtitle>
                     <v-card-text><v-text-field v-model="inputValues.note" label="세부내용"></v-text-field></v-card-text>
                     <v-card-actions>
-                      <v-btn v-if="inputValues.seq_no" v-on:click="doDelete(list.key)" color="error">삭제</v-btn>
+                      <v-btn v-if="inputValues.seq_no" v-on:click="doDelete(inputValues.key)" color="error">삭제</v-btn>
                       <v-spacer></v-spacer>
                       <v-btn v-on:click="doSave" color="success">저장</v-btn>
                       <v-btn v-on:click="doHiddenInsertBtn" color="primary">닫기</v-btn>
@@ -138,6 +139,17 @@
             </v-main>
           </v-form>
         </v-app>
+      </div>
+      <div id="menuApp" ref="menuApp" v-show="visible.showMenu">
+        <v-app-bar color="blue" elevation="10" fixed>
+          <v-toolbar-title v-on:click="toggleMenu">오십이주</v-toolbar-title>
+        </v-app-bar>
+        <v-row class="appBarSpace"></v-row>
+        <div>asdfa</div>
+        <div>asdfa</div>
+        <div>asdfa</div>
+        <div>asdfa</div>
+        <div>asdfa</div>
       </div>
     </body>
 </html>

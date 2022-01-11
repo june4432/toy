@@ -83,6 +83,7 @@ let app = new Vue({
       //해당 아이템 삭제 
       localStorage.removeItem(key);
       this.doSnackBar("삭제하였습니다.");
+      this.visible.insert = false;
       //재조회
       this.doSearch();
     },
@@ -181,6 +182,9 @@ let app = new Vue({
     setInsertFalse : function(){
       this.visible.insert = false;
       this.doSnackBar("취소했어요.");
+    },
+    toggleMenu : function(){
+      menuApp.visible.showMenu = !menuApp.visible.showMenu;
     }
   }
 });
